@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generators - Event Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 1rem 0;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 1rem;
+        }
+        
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: #3498db;
+        }
+        
+        nav ul li a.active {
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        /* Page Styles */
+        .page {
+            margin-top: 20px;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 4px 4px 0 0;
+        }
+        
+        .tab.active {
+            background-color: #fff;
+            border-color: #ddd;
+            color: #3498db;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .result-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .qr-image {
+            margin: 20px auto;
+            max-width: 300px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            background-color: #fff;
+        }
+        
+        .otp-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            margin: 20px 0;
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                border-bottom: none;
+            }
+            
+            .tab {
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">EMS Portal</div>
+            <nav>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="#" class="active">Generators</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="page" id="generators-page">
+            <h1>Generators</h1>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="qr-generator">QR Code Generator</div>
+                <div class="tab" data-tab="otp-generator">OTP Generator</div>
+            </div>
+            
+            <!-- QR Code Generator Tab -->
+            <div class="tab-content active" id="qr-generator">
+                <h2>Generate QR Codes</h2>
+                <p>Create various types of QR codes for events, tickets, contacts, and more.</p>
+                
+                <form id="qr-form">
+                    <div class="form-group">
+                        <label for="qr-type">QR Code Type</label>
+                        <select id="qr-type">
+                            <option value="text">Plain Text</option>
+                            <option value="url">URL / Website</option>
+                            <option value="contact">Contact Information (vCard)</option>
+                            <option value="wifi">WiFi Network</option>
+                            <option value="booking">Event Ticket / Booking</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Plain Text -->
+                    <div class="form-group qr-field" id="text-field">
+                        <label for="text-data">Text Content</label>
+                        <textarea id="text-data" rows="3" placeholder="Enter text content"></textarea>
+                    </div>
+                    
+                    <!-- URL -->
+                    <div class="form-group qr-field" id="url-field" style="display: none;">
+                        <label for="url-data">Website URL</label>
+                        <input type="url" id="url-data" placeholder="https://example.com">
+                    </div>
+                    
+                    <!-- Contact -->
+                    <div id="contact-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="contact-name">Full Name</label>
+                            <input type="text" id="contact-name" placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Email</label>
+                            <input type="email" id="contact-email" placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-phone">Phone</label>
+                            <input type="tel" id="contact-phone" placeholder="+1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-org">Organization</label>
+                            <input type="text" id="contact-org" placeholder="Company Name">
+                        </div>
+                    </div>
+                    
+                    <!-- WiFi -->
+                    <div id="wifi-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="wifi-ssid">Network Name (SSID)</label>
+                            <input type="text" id="wifi-ssid" placeholder="WiFi Network Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="wifi-password">Password</label>
+                            <input type="password" id="wifi-password" placeholder="Network Password">
+                        </div>
+                        <div class="form-group">
+                            <label for="wifi-encryption">Encryption Type</label>
+                            <select id="wifi-encryption">
+                                <option value="WPA">WPA/WPA2/WPA3</option>
+                                <option value="WEP">WEP</option>
+                                <option value="NONE">None (Open Network)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Booking -->
+                    <div class="form-group qr-field" id="booking-field" style="display: none;">
+                        <label for="booking-id">Booking ID</label>
+                        <input type="number" id="booking-id" placeholder="Enter booking ID">
+                    </div>
+                    
+                    <!-- Common QR Options -->
+                    <div class="form-group">
+                        <label for="qr-size">QR Code Size</label>
+                        <select id="qr-size">
+                            <option value="3">Small</option>
+                            <option value="5" selected>Medium</option>
+                            <option value="8">Large</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn">Generate QR Code</button>
+                </form>
+                
+                <div class="result-container" id="qr-result" style="display: none;">
+                    <div class="message" id="qr-message"></div>
+                    <div class="qr-image">
+                        <img id="qr-image" src="" alt="QR Code">
+                    </div>
+                    <p>You can download this QR code or scan it directly.</p>
+                    <button class="btn" id="download-qr">Download QR Code</button>
+                </div>
+            </div>
+            
+            <!-- OTP Generator Tab -->
+            <div class="tab-content" id="otp-generator">
+                <h2>Generate One-Time Passwords</h2>
+                <p>Create secure one-time passwords for various authentication purposes.</p>
+                
+                <form id="otp-form">
+                    <div class="form-group">
+                        <label for="otp-purpose">Purpose</label>
+                        <select id="otp-purpose">
+                            <option value="account_verification">Account Verification</option>
+                            <option value="password_reset">Password Reset</option>
+                            <option value="login_verification">Login Verification</option>
+                            <option value="event_check_in">Event Check-in</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="otp-length">OTP Length</label>
+                        <select id="otp-length">
+                            <option value="4">4 digits</option>
+                            <option value="6" selected>6 digits</option>
+                            <option value="8">8 digits</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="otp-expiry">Expiry Time</label>
+                        <select id="otp-expiry">
+                            <option value="5">5 minutes</option>
+                            <option value="15" selected>15 minutes</option>
+                            <option value="30">30 minutes</option>
+                            <option value="60">1 hour</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn">Generate OTP</button>
+                </form>
+                
+                <div class="result-container" id="otp-result" style="display: none;">
+                    <div class="message" id="otp-message"></div>
+                    <p>Your One-Time Password:</p>
+                    <div class="otp-box" id="otp-value"></div>
+                    <p>This OTP will expire in <span id="otp-expiry-time">15 minutes</span>.</p>
+                    <p><small>Note: In a production environment, this would be sent via SMS or email, not displayed here.</small></p>
+                    
+                    <h3 style="margin-top: 30px;">Verify OTP</h3>
+                    <p>You can test the verification process here:</p>
+                    
+                    <div class="form-group">
+                        <label for="verify-otp">Enter OTP</label>
+                        <input type="text" id="verify-otp" placeholder="Enter OTP to verify">
+                    </div>
+                    
+                    <button class="btn" id="verify-otp-btn">Verify OTP</button>
+                    <div class="message" id="verify-message" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching functionality
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs and contents
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // QR code type change handler
+            document.getElementById('qr-type').addEventListener('change', function() {
+                // Hide all fields first
+                document.querySelectorAll('.qr-field, #contact-fields, #wifi-fields').forEach(field => {
+                    field.style.display = 'none';
+                });
+                
+                // Show the relevant fields based on selected type
+                const selectedType = this.value;
+                switch (selectedType) {
+                    case 'text':
+                        document.getElementById('text-field').style.display = 'block';
+                        break;
+                    case 'url':
+                        document.getElementById('url-field').style.display = 'block';
+                        break;
+                    case 'contact':
+                        document.getElementById('contact-fields').style.display = 'block';
+                        break;
+                    case 'wifi':
+                        document.getElementById('wifi-fields').style.display = 'block';
+                        break;
+                    case 'booking':
+                        document.getElementById('booking-field').style.display = 'block';
+                        break;
+                }
+            });
+            
+            // QR Code form submission
+            document.getElementById('qr-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const qrType = document.getElementById('qr-type').value;
+                const qrSize = document.getElementById('qr-size').value;
+                let qrData = '';
+                let queryParams = '';
+                
+                // Build query parameters based on QR type
+                switch (qrType) {
+                    case 'text':
+                        qrData = document.getElementById('text-data').value;
+                        if (!qrData) {
+                            showMessage('qr-message', 'Please enter text content', 'error');
+                            return;
+                        }
+                        queryParams = `type=text&data=${encodeURIComponent(qrData)}`;
+                        break;
+                        
+                    case 'url':
+                        qrData = document.getElementById('url-data').value;
+                        if (!qrData || !qrData.match(/^https?:\/\/.+/)) {
+                            showMessage('qr-message', 'Please enter a valid URL starting with http:// or https://', 'error');
+                            return;
+                        }
+                        queryParams = `type=url&data=${encodeURIComponent(qrData)}`;
+                        break;
+                        
+                    case 'contact':
+                        const name = document.getElementById('contact-name').value;
+                        const email = document.getElementById('contact-email').value;
+                        const phone = document.getElementById('contact-phone').value;
+                        const org = document.getElementById('contact-org').value;
+                        
+                        if (!name && !email && !phone) {
+                            showMessage('qr-message', 'Please enter at least a name, email, or phone number', 'error');
+                            return;
+                        }
+                        
+                        queryParams = `type=contact&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&org=${encodeURIComponent(org)}`;
+                        break;
+                        
+                    case 'wifi':
+                        const ssid = document.getElementById('wifi-ssid').value;
+                        const password = document.getElementById('wifi-password').value;
+                        const encryption = document.getElementById('wifi-encryption').value;
+                        
+                        if (!ssid) {
+                            showMessage('qr-message', 'Network name (SSID) is required', 'error');
+                            return;
+                        }
+                        
+                        queryParams = `type=wifi&ssid=${encodeURIComponent(ssid)}&password=${encodeURIComponent(password)}&encryption=${encryption}`;
+                        break;
+                        
+                    case 'booking':
+                        const bookingId = document.getElementById('booking-id').value;
+                        if (!bookingId) {
+                            showMessage('qr-message', 'Please enter a booking ID', 'error');
+                            return;
+                        }
+                        queryParams = `type=booking&data=${bookingId}`;
+                        break;
+                }
+                
+                // Add size parameter
+                queryParams += `&size=${qrSize}`;
+                
+                // Show QR code (directly use the API endpoint)
+                const qrImageUrl = `/api/qrcode.php?${queryParams}`;
+                document.getElementById('qr-image').src = qrImageUrl;
+                document.getElementById('qr-result').style.display = 'block';
+                
+                // Setup download button
+                document.getElementById('download-qr').onclick = function() {
+                    // Create a temporary link for download
+                    const link = document.createElement('a');
+                    link.href = qrImageUrl;
+                    link.download = `qrcode_${qrType}_${Date.now()}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                };
+                
+                showMessage('qr-message', 'QR Code generated successfully!', 'success');
+            });
+            
+            // OTP form submission
+            document.getElementById('otp-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const purpose = document.getElementById('otp-purpose').value;
+                const length = document.getElementById('otp-length').value;
+                const expiry = document.getElementById('otp-expiry').value;
+                
+                // Send request to generate OTP
+                fetch('/api/otp.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        purpose: purpose,
+                        length: length,
+                        expiry_minutes: expiry
+                    }),
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Display the OTP (in a real app, this would be sent to user's email/phone)
+                        document.getElementById('otp-value').textContent = data.otp;
+                        document.getElementById('otp-expiry-time').textContent = data.expires_in;
+                        document.getElementById('otp-result').style.display = 'block';
+                        showMessage('otp-message', 'OTP generated successfully!', 'success');
+                    } else {
+                        showMessage('otp-message', data.error || 'Failed to generate OTP', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('otp-message', 'An error occurred. Please try again.', 'error');
+                });
+            });
+            
+            // OTP verification
+            document.getElementById('verify-otp-btn').addEventListener('click', function() {
+                const otpCode = document.getElementById('verify-otp').value;
+                const purpose = document.getElementById('otp-purpose').value;
+                
+                if (!otpCode) {
+                    showMessage('verify-message', 'Please enter the OTP to verify', 'error');
+                    return;
+                }
+                
+                // Send verification request
+                fetch('/api/otp.php', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        otp: otpCode,
+                        purpose: purpose
+                    }),
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage('verify-message', 'OTP verified successfully!', 'success');
+                    } else {
+                        showMessage('verify-message', data.error || 'Invalid or expired OTP', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('verify-message', 'An error occurred during verification', 'error');
+                });
+            });
+            
+            // Logout button
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Send logout request
+                fetch('/api/logout.php', {
+                    method: 'POST',
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = 'login.html';
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                    window.location.href = 'login.html'; // Redirect anyway
+                });
+            });
+            
+            // Utility function to show messages
+            function showMessage(elementId, message, type) {
+                const element = document.getElementById(elementId);
+                element.textContent = message;
+                element.className = 'message ' + type;
+                element.style.display = 'block';
+                
+                // Hide error messages after a few seconds
+                if (type === 'error') {
+                    setTimeout(() => {
+                        element.style.display = 'none';
+                    }, 5000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
